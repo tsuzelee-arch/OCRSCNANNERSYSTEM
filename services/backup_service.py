@@ -27,11 +27,23 @@ class BackupService:
         """讀取 ZIP 並覆蓋目前的資料庫與設定檔"""
         try:
             with zipfile.ZipFile(load_path, 'r') as zf:
-                if "order_app.db" in zf.namelist():
+                files_in_zip = zf.namelist()
+                
+                # 如果舊備份包裡面沒有 db，只有 json，我們要刪除現有的 db 強制它走 migration 流程
+                if "order_app.db" not in files_in_zip:
+                    if os.path.exists(DB_PATH):
+                        # Force closing connection by db_manager if needed, but normally sqlite allows file deletion if no active handles
+                        try:
+                            os.remove(DB_PATH)
+                            logger.info(f"發現舊版備份 (無資料庫)，已清除現有資料庫以強制重新轉移舊設定")
+                        except Exception as e:
+                            logger.error(f"清除現有資料庫失敗: {e}")
+                else:
                     with open(DB_PATH, "wb") as f:
                         f.write(zf.read("order_app.db"))
                     logger.info(f"已還原 {DB_PATH}")
-                if "order_ocr_config.json" in zf.namelist():
+
+                if "order_ocr_config.json" in files_in_zip:
                     with open(CONFIG_FILE, "wb") as f:
                         f.write(zf.read("order_ocr_config.json"))
                     logger.info(f"已還原 {CONFIG_FILE}")
