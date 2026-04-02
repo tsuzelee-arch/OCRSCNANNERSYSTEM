@@ -40,8 +40,8 @@ class TemplateManagerWindow(ctk.CTkToplevel):
         btn_action_frame = ctk.CTkFrame(right_frame, fg_color="transparent")
         btn_action_frame.pack(pady=10)
         
-        ctk.CTkButton(btn_action_frame, text="載入選定規則以修改", command=self.load_rule_for_edit).pack(side="left", padx=5)
         ctk.CTkButton(btn_action_frame, text="刪除選定規則", fg_color="red", hover_color="darkred", command=self.del_rule).pack(side="left", padx=5)
+        self.tree.bind("<Double-1>", lambda event: self.load_rule_for_edit())
         
         btn_action_frame2 = ctk.CTkFrame(right_frame, fg_color="transparent")
         btn_action_frame2.pack(pady=5)

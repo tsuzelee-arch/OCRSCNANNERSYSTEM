@@ -109,24 +109,34 @@ def parse_excel_file(filepath):
                 
                 # 兼容性處理
                 current_mapping = mapping
+                test_skip = 0
                 if isinstance(mapping, dict) and "mapping" in mapping:
                     current_mapping = mapping["mapping"]
+                    test_skip = mapping.get("skip_rows", 0)
+                
+                # 取得該 skip_rows 下的 headers
+                test_headers = file_headers
+                if test_skip > 0:
+                    try:
+                        temp_header, _ = load_excel_stream(filepath, test_skip)
+                        test_headers = [str(h).strip() for h in temp_header.columns]
+                    except:
+                        pass
                 
                 # 計算命中率
-                match_count = sum(1 for h in current_mapping.keys() if h in file_headers)
+                match_count = sum(1 for h in current_mapping.keys() if h in test_headers)
                 
                 if match_count > best_match_score and match_count > 0:
                     best_match_score = match_count
                     active_mapping = current_mapping
                     static_values = config.get("static_fields", {})
                     
-                    # 傳統匹配如果發現有 skiprows，也需重讀，不過最好還是靠關鍵字偵測
-                    if isinstance(mapping, dict) and mapping.get("skip_rows", 0) > 0:
-                        skip_rows = mapping.get("skip_rows", 0)
-                        df_header, df = load_excel_stream(filepath, skip_rows)
+                    if test_skip > 0:
+                        df_header, df = load_excel_stream(filepath, test_skip)
                         file_headers = [str(h).strip() for h in df_header.columns]
-                            
-                    print(f"Heuristic match identified platform: {p_name} (Score: {match_count})")
+                        print(f"Heuristic match identified platform: {p_name} (Score: {match_count}) with skip_rows {test_skip}")
+                    else:
+                        print(f"Heuristic match identified platform: {p_name} (Score: {match_count})")
         
         records = []
         for index, row in df.iterrows():

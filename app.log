@@ -22,3 +22,7 @@ message: "API Key not found. Please pass a valid API key."
 2026-04-02 08:20:30 | INFO     | state_manager | StateManager initialized.
 2026-04-02 08:22:47 | INFO     | state_manager | 已覆寫總表紀錄，目前共 31 筆。
 2026-04-02 08:28:37 | INFO     | state_manager | 已覆寫總表紀錄，目前共 1 筆。
+2026-04-02 12:53:35 | INFO     | main | 初始化資料庫 (Initializing Database)...
+2026-04-02 12:53:35 | INFO     | main | 啟動主應用程式介面 (Starting Main App Window)...
+2026-04-02 12:53:51 | INFO     | state_manager | StateManager initialized.
+2026-04-02 12:56:04 | INFO     | state_manager | 已覆寫總表紀錄，目前共 2 筆。
