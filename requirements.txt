@@ -6,7 +6,7 @@ easyocr
 pdfplumber
 google-generativeai
 Pillow
-msoffcrypto-python
+msoffcrypto-tool
 opencv-python
 torch
 torchvision
