@@ -24,3 +24,8 @@ build/
 .idea/
 .DS_Store
 Thumbs.db
+
+# 排除 AI Agent 工具與 log 檔案
+.agent/
+.gemini/
+*.log
