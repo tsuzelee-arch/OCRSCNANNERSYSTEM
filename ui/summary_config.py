@@ -259,7 +259,7 @@ class SummaryConfigWindow(ctk.CTkToplevel):
         self.important_fields = new_important
 
     def import_from_excel(self):
-        filepath = filedialog.askopenfilename(title="從空白 Excel 抽取標題:", filetypes=[("Excel", "*.xlsx;*.xls")])
+        filepath = filedialog.askopenfilename(title="從空白 Excel 抽取標題:", filetypes=[("Excel", "*.xlsx *.xls"), ("All Files", "*.*")])
         if filepath:
             try:
                 df = pd.read_excel(filepath, nrows=0)

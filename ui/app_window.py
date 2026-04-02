@@ -66,7 +66,7 @@ def open_settings(parent):
             
     def restore_db():
         if messagebox.askyesno("警告", "匯入新資料庫將會覆蓋您目前的設定與所有建立的規則、目錄。\n這會徹底讀取備份壓縮包中的內容。是否繼續？"):
-            load_path = filedialog.askopenfilename(filetypes=[("ZIP 備份檔", "*.zip")], title="選擇備份的 ZIP 檔案")
+            load_path = filedialog.askopenfilename(filetypes=[("ZIP 備份檔", "*.zip"), ("All Files", "*.*")], title="選擇備份的 ZIP 檔案")
             if load_path:
                 try:
                     BackupService.restore_system(load_path)
@@ -186,7 +186,12 @@ class AppWindow:
     def handle_upload(self):
         file_paths = filedialog.askopenfilenames(
             title="選擇訂單文件",
-            filetypes=[("All Supported", "*.xlsx;*.xls;*.png;*.jpg;*.pdf"), ("Excel Files", "*.xlsx;*.xls"), ("Images/PDF", "*.png;*.jpg;*.pdf")]
+            filetypes=[
+                ("All Supported", "*.xlsx *.xls *.png *.jpg *.pdf"), 
+                ("Excel Files", "*.xlsx *.xls"), 
+                ("Images/PDF", "*.png *.jpg *.pdf"),
+                ("All Files", "*.*")
+            ]
         )
         if not file_paths:
             return

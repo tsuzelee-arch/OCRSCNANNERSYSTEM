@@ -132,7 +132,7 @@ class CatalogManagerWindow(ctk.CTkToplevel):
         self.load_data()
 
     def import_excel_cmd(self):
-        filepath = filedialog.askopenfilename(filetypes=[("Excel", "*.xlsx;*.xls")])
+        filepath = filedialog.askopenfilename(filetypes=[("Excel", "*.xlsx *.xls"), ("All Files", "*.*")])
         if not filepath: return
         
         try:

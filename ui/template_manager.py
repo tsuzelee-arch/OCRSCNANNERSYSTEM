@@ -109,7 +109,7 @@ class TemplateManagerWindow(ctk.CTkToplevel):
 
     def export_rules(self):
         import json
-        save_path = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON", "*.json")], title="匯出規則格式檔")
+        save_path = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON", "*.json"), ("All Files", "*.*")], title="匯出規則格式檔")
         if save_path:
             with open(save_path, "w", encoding="utf-8") as f:
                 json.dump(get_templates(), f, ensure_ascii=False, indent=4)
@@ -117,7 +117,7 @@ class TemplateManagerWindow(ctk.CTkToplevel):
 
     def import_rules(self):
         import json
-        load_path = filedialog.askopenfilename(filetypes=[("JSON", "*.json")], title="匯入/遷移規則格式檔")
+        load_path = filedialog.askopenfilename(filetypes=[("JSON", "*.json"), ("All Files", "*.*")], title="匯入/遷移規則格式檔")
         if load_path:
             try:
                 with open(load_path, "r", encoding="utf-8") as f:
@@ -171,7 +171,7 @@ class TemplateManagerWindow(ctk.CTkToplevel):
         self.status_lbl.configure(text=f"✅ 平台設定 '{name}' 已匯入修改區！", text_color="green")
         
     def load_sample(self):
-        filepath = filedialog.askopenfilename(filetypes=[("Excel", "*.xlsx;*.xls")])
+        filepath = filedialog.askopenfilename(filetypes=[("Excel", "*.xlsx *.xls"), ("All Files", "*.*")])
         if not filepath: return
         try:
             df = pd.read_excel(filepath, nrows=0)
