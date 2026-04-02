@@ -83,3 +83,4 @@ order-ocr-app/
 - **C1**: First-row Excel headers MUST be the absolute source of truth for column identification.
 - **C2**: Dictionary corrections MUST require user confirmation in the UI grid.
 - **C3**: Prioritize user experience. If it looks daunting, simplify the GUI.
+- **C4**: **NEVER REMOVE EXISTING FEATURES OR UI ELEMENTS** unless explicitly requested by the user. **NEVER ALTER DATA SAVING STRUCTURES IN A WAY THAT DROPS UNMAPPED/UNUSED FIELDS** (e.g., when saving template headers, keep all original columns to maintain precise heuristic fingerprinting). Always rigorously preserve existing functionality.
