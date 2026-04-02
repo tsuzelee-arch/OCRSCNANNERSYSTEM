@@ -13,16 +13,22 @@ from core.config import DEFAULT_HEADERS
 
 def load_excel_stream(filepath, skip_rows=0):
     ext = os.path.splitext(filepath)[1].lower()
+    
+    # NEW LOGIC: Always keep Row 0 as the header. Skip row indexes 1 to skip_rows.
+    skip_val = 0
+    if isinstance(skip_rows, int) and skip_rows > 0:
+        skip_val = [i for i in range(1, skip_rows + 1)]
+    
     try:
         # 嘗試預設引擎讀取
-        return pd.read_excel(filepath, nrows=0, skiprows=skip_rows), pd.read_excel(filepath, skiprows=skip_rows)
+        return pd.read_excel(filepath, nrows=0, skiprows=skip_val), pd.read_excel(filepath, skiprows=skip_val)
     except Exception as base_e:
         err_str = str(base_e).lower()
         
         # 處理 .xls 格式但被誤稱為 .xlsx 的情況 (OLE2 報錯)
         if ("ole2" in err_str or "workbook in ole2" in err_str):
             try:
-                return pd.read_excel(filepath, nrows=0, engine="xlrd", skiprows=skip_rows), pd.read_excel(filepath, engine="xlrd", skiprows=skip_rows)
+                return pd.read_excel(filepath, nrows=0, engine="xlrd", skiprows=skip_val), pd.read_excel(filepath, engine="xlrd", skiprows=skip_val)
             except:
                 pass
                 
@@ -41,11 +47,11 @@ def load_excel_stream(filepath, skip_rows=0):
                     # 對於解密後的流，有時 pandas 仍會猜錯，根據原副檔名強迫指定引擎
                     # 偵測是否為 OLE2 流
                     try:
-                        return pd.read_excel(decrypted_wb, nrows=0, skiprows=skip_rows), pd.read_excel(decrypted_wb, skiprows=skip_rows)
+                        return pd.read_excel(decrypted_wb, nrows=0, skiprows=skip_val), pd.read_excel(decrypted_wb, skiprows=skip_val)
                     except Exception as inner_e:
                         if "ole2" in str(inner_e).lower():
                            decrypted_wb.seek(0)
-                           return pd.read_excel(decrypted_wb, nrows=0, engine="xlrd", skiprows=skip_rows), pd.read_excel(decrypted_wb, engine="xlrd", skiprows=skip_rows)
+                           return pd.read_excel(decrypted_wb, nrows=0, engine="xlrd", skiprows=skip_val), pd.read_excel(decrypted_wb, engine="xlrd", skiprows=skip_val)
                         raise inner_e
                 except Exception:
                     continue

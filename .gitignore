@@ -24,3 +24,8 @@ build/
 .idea/
 .DS_Store
 Thumbs.db
+
+# 排除測試資料與日誌
+testfile/
+test_skip.xlsx
+app.log

@@ -68,7 +68,7 @@ class SummaryConfigWindow(ctk.CTkToplevel):
         config_head_frame.pack(fill="x", pady=5)
         
         ctk.CTkLabel(config_head_frame, text="目前編輯:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
-        self.lbl_current_preset = ctk.CTkLabel(config_head_frame, text="預設主表單", font=ctk.CTkFont(weight="bold", text_color="#F4A460"))
+        self.lbl_current_preset = ctk.CTkLabel(config_head_frame, text="預設主表單", font=ctk.CTkFont(weight="bold"), text_color="#F4A460")
         self.lbl_current_preset.grid(row=0, column=1, padx=5, pady=5, sticky="w")
         
         ctk.CTkLabel(config_head_frame, text="觸發關鍵字 (逗號分隔):").grid(row=1, column=0, padx=5, pady=5, sticky="w")
@@ -76,35 +76,18 @@ class SummaryConfigWindow(ctk.CTkToplevel):
         self.entry_keywords.grid(row=1, column=1, padx=5, pady=5, sticky="w")
         
         # Columns Manage
-        ctk.CTkLabel(right_frame, text="匯出欄位順序與必填設定", font=ctk.CTkFont(weight="bold")).pack(pady=5)
+        ctk.CTkLabel(right_frame, text="步驟2: 選擇需要匯出的欄位與是否必填", font=ctk.CTkFont(weight="bold")).pack(pady=5)
         
-        # Headers Table
-        style = ttk.Style()
-        style.configure("Summary.Treeview", rowheight=30)
+        self.scroll_frame = ctk.CTkScrollableFrame(right_frame)
+        self.scroll_frame.pack(side="top", fill="both", expand=True, padx=5, pady=5)
         
-        self.tree = ttk.Treeview(right_frame, columns=("Export", "Important", "ColumnName"), show="headings", style="Summary.Treeview")
-        self.tree.heading("Export", text="匯出?")
-        self.tree.heading("Important", text="重要欄位?")
-        self.tree.heading("ColumnName", text="欄位名稱")
-        
-        self.tree.column("Export", width=80, anchor="center")
-        self.tree.column("Important", width=100, anchor="center")
-        self.tree.column("ColumnName", width=350, anchor="w")
-        
-        self.tree.pack(side="top", fill="both", expand=True)
-        
-        scrollbar = ttk.Scrollbar(right_frame, orient="vertical", command=self.tree.yview)
-        self.tree.configure(yscroll=scrollbar.set)
-        scrollbar.place(relx=1.0, rely=0.15, relheight=0.6, anchor="ne")
-        
-        self.tree.bind("<Button-1>", self.on_cell_click)
+        # Checkbox variables and UI elements
+        self.column_widgets = []
 
         # Control Buttons
         btn_frame = ctk.CTkFrame(right_frame, fg_color="transparent")
         btn_frame.pack(fill="x", padx=5, pady=5)
         
-        ctk.CTkButton(btn_frame, text="⬆️ 上移", width=80, command=lambda: self.move_item(-1)).pack(side="left", padx=5)
-        ctk.CTkButton(btn_frame, text="⬇️ 下移", width=80, command=lambda: self.move_item(1)).pack(side="left", padx=5)
         ctk.CTkButton(btn_frame, text="📁 從 Excel 抽取標題", fg_color="brown", command=self.import_from_excel).pack(side="left", padx=15)
         
         ctk.CTkButton(btn_frame, text="💾 儲存此配置設定", fg_color="#4682B4", hover_color="#5F9EA0", command=self.save_current_preset).pack(side="right", padx=5)
@@ -187,9 +170,10 @@ class SummaryConfigWindow(ctk.CTkToplevel):
             self.load_preset_data("預設主表單")
 
     def refresh_tree(self):
-        # Clear
-        for item in self.tree.get_children():
-            self.tree.delete(item)
+        # Clear existing widgets
+        for widget in self.scroll_frame.winfo_children():
+            widget.destroy()
+        self.column_widgets.clear()
             
         # Combine selected and unselected to show all available headers
         all_display = list(self.selected_headers)
@@ -197,58 +181,82 @@ class SummaryConfigWindow(ctk.CTkToplevel):
             if h not in all_display:
                 all_display.append(h)
                 
+        # Header row
+        header_frame = ctk.CTkFrame(self.scroll_frame, fg_color="#E0E0E0")
+        header_frame.pack(fill="x", pady=(0, 5))
+        ctk.CTkLabel(header_frame, text="欄位名稱", width=250, anchor="w", text_color="black").pack(side="left", padx=10)
+        ctk.CTkLabel(header_frame, text="決定匯出", width=80, text_color="black").pack(side="left", padx=10)
+        ctk.CTkLabel(header_frame, text="設為必填", width=80, text_color="black").pack(side="left", padx=10)
+        ctk.CTkLabel(header_frame, text="排序", width=120, text_color="black").pack(side="right", padx=10)
+
+        for idx, h in enumerate(all_display):
+            self.create_column_row(h, idx)
+
+    def create_column_row(self, col_name, idx):
+        row_frame = ctk.CTkFrame(self.scroll_frame)
+        row_frame.pack(fill="x", pady=2)
+        
+        ctk.CTkLabel(row_frame, text=col_name, width=250, anchor="w").pack(side="left", padx=10)
+        
+        var_export = ctk.BooleanVar(value=(col_name in self.selected_headers))
+        var_important = ctk.BooleanVar(value=(col_name in self.important_fields))
+        
+        chk_export = ctk.CTkCheckBox(row_frame, text="", variable=var_export, width=80)
+        chk_export.pack(side="left", padx=10)
+        
+        chk_important = ctk.CTkCheckBox(row_frame, text="", variable=var_important, width=80, fg_color="red")
+        chk_important.pack(side="left", padx=10)
+        
+        btn_down = ctk.CTkButton(row_frame, text="⬇️", width=40, command=lambda cn=col_name: self.move_item(cn, 1))
+        btn_down.pack(side="right", padx=5)
+        
+        btn_up = ctk.CTkButton(row_frame, text="⬆️", width=40, command=lambda cn=col_name: self.move_item(cn, -1))
+        btn_up.pack(side="right", padx=5)
+        
+        self.column_widgets.append({
+            "name": col_name,
+            "export_var": var_export,
+            "important_var": var_important
+        })
+
+    def move_item(self, col_name, direction):
+        self.sync_order_from_tree() # ensure unselected ones are synced too
+        
+        all_display = list(self.selected_headers)
+        for h in self.all_headers:
+            if h not in all_display:
+                all_display.append(h)
+                
+        try:
+            idx = all_display.index(col_name)
+        except ValueError:
+            return
+            
+        new_idx = idx + direction
+        if 0 <= new_idx < len(all_display):
+            all_display.insert(new_idx, all_display.pop(idx))
+            
+        # rebuild selected_headers based on the new order so UI respects it
+        new_selected = []
         for h in all_display:
-            is_export = "✅" if h in self.selected_headers else "⬜"
-            is_important = "🚩" if h in self.important_fields else "⬜"
-            self.tree.insert("", "end", values=(is_export, is_important, h))
-
-    def on_cell_click(self, event):
-        region = self.tree.identify_region(event.x, event.y)
-        if region != "cell": return
-        
-        column = self.tree.identify_column(event.x)
-        item_id = self.tree.identify_row(event.y)
-        if not item_id: return
-        
-        values = list(self.tree.item(item_id, "values"))
-        col_name = values[2]
-        
-        if column == "#1": # Export
-            if col_name in self.selected_headers:
-                self.selected_headers.remove(col_name)
-                values[0] = "⬜"
-            else:
-                self.selected_headers.append(col_name)
-                values[0] = "✅"
-        elif column == "#2": # Important
-            if col_name in self.important_fields:
-                self.important_fields.remove(col_name)
-                values[1] = "⬜"
-            else:
-                self.important_fields.append(col_name)
-                values[1] = "🚩"
+            if h in self.selected_headers:
+                new_selected.append(h)
                 
-        self.tree.item(item_id, values=values)
-
-    def move_item(self, direction):
-        selected = self.tree.selection()
-        if not selected: return
-        
-        for item_id in selected:
-            idx = self.tree.index(item_id)
-            new_idx = idx + direction
-            if 0 <= new_idx < len(self.tree.get_children()):
-                self.tree.move(item_id, "", new_idx)
-                
-        self.sync_order_from_tree()
+        self.selected_headers = new_selected
+        self.all_headers = all_display
+        self.refresh_tree()
 
     def sync_order_from_tree(self):
         new_selected = []
-        for item_id in self.tree.get_children():
-            vals = self.tree.item(item_id, "values")
-            if vals[0] == "✅":
-                new_selected.append(vals[2])
+        new_important = []
+        for widget_info in self.column_widgets:
+            col_name = widget_info["name"]
+            if widget_info["export_var"].get():
+                new_selected.append(col_name)
+            if widget_info["important_var"].get():
+                new_important.append(col_name)
         self.selected_headers = new_selected
+        self.important_fields = new_important
 
     def import_from_excel(self):
         filepath = filedialog.askopenfilename(title="從空白 Excel 抽取標題:", filetypes=[("Excel", "*.xlsx;*.xls")])

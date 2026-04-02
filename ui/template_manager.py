@@ -40,7 +40,8 @@ class TemplateManagerWindow(ctk.CTkToplevel):
         btn_action_frame = ctk.CTkFrame(right_frame, fg_color="transparent")
         btn_action_frame.pack(pady=10)
         
-        ctk.CTkButton(btn_action_frame, text="載入選定規則以修改", command=self.load_rule_for_edit).pack(side="left", padx=5)
+        # 雙擊載入規則
+        self.tree.bind("<Double-1>", self._on_double_click)
         ctk.CTkButton(btn_action_frame, text="刪除選定規則", fg_color="red", hover_color="darkred", command=self.del_rule).pack(side="left", padx=5)
         
         btn_action_frame2 = ctk.CTkFrame(right_frame, fg_color="transparent")
@@ -71,7 +72,7 @@ class TemplateManagerWindow(ctk.CTkToplevel):
         # New: Skip Rows
         self.skip_frame = ctk.CTkFrame(left_frame, fg_color="transparent")
         self.skip_frame.pack(fill="x", padx=10, pady=5)
-        ctk.CTkLabel(self.skip_frame, text="跳過頂部冗餘行數 (Skip Rows):", font=ctk.CTkFont(size=12)).pack(side="left", padx=5)
+        ctk.CTkLabel(self.skip_frame, text="表頭下方略過資料行數 (跳過無效資訊):", font=ctk.CTkFont(size=12)).pack(side="left", padx=5)
         self.entry_skip_rows = ctk.CTkEntry(self.skip_frame, placeholder_text="預設 0", width=80)
         self.entry_skip_rows.pack(side="left", padx=5)
         
@@ -133,6 +134,9 @@ class TemplateManagerWindow(ctk.CTkToplevel):
             except Exception as e:
                 messagebox.showerror("錯誤", f"匯入失敗: {e}")
         
+    def _on_double_click(self, event):
+        self.load_rule_for_edit()
+
     def load_rule_for_edit(self):
         selected = self.tree.selection()
         if not selected: return

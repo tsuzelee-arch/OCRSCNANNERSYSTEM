@@ -142,7 +142,7 @@ class AppWindow:
 
         # 核心功能切換
         btn_summary = ctk.CTkButton(
-            frame, text="📊 匯總表選擇與必填設定", font=ctk.CTkFont(size=16), height=50, fg_color="#F4A460", hover_color="#CD853F",
+            frame, text="📦 匯出表單與智能分流設定", font=ctk.CTkFont(size=16), height=50, fg_color="#F4A460", hover_color="#CD853F",
             command=lambda: open_summary_config(self.root)
         )
         btn_summary.pack(pady=10, padx=40, fill="x")
