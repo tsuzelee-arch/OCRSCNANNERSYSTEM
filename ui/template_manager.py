@@ -240,8 +240,7 @@ class TemplateManagerWindow(ctk.CTkToplevel):
         mapping = {}
         for h, cb in self.comboboxes.items():
             val = cb.get()
-            if val != "-- 忽略此欄 --":
-                mapping[h] = val
+            mapping[h] = val
                 
         # 處理 Skip Rows
         skip_val = self.entry_skip_rows.get().strip()
