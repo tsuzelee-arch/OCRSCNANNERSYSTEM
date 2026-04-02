@@ -22,7 +22,7 @@ parser.add_argument("--mode", choices=["dev", "trial"], default="dev", help="運
 args, unknown = parser.parse_known_args()
 os.environ["ORDER_APP_MODE"] = args.mode
 
-print(f"--- 系統啟動模式: {os.environ['ORDER_APP_MODE'].upper()} ---")
+# print(f"--- 系統啟動模式: {os.environ['ORDER_APP_MODE'].upper()} ---")
 
 class StderrFilter:
     def __init__(self, stream):
@@ -30,11 +30,14 @@ class StderrFilter:
     def write(self, data):
         if "libpng warning: iCCP: known incorrect sRGB profile" in data: return
         if "libpng warning:" in data: return
-        self.stream.write(data)
+        if self.stream is not None:
+            self.stream.write(data)
     def flush(self):
-        self.stream.flush()
+        if self.stream is not None:
+            self.stream.flush()
 
 sys.stderr = StderrFilter(sys.stderr)
+sys.stdout = StderrFilter(sys.stdout) # Prevent print crashes
 
 warnings.filterwarnings('ignore')
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
