@@ -165,13 +165,35 @@ class TemplateManagerWindow(ctk.CTkToplevel):
             
         self.render_mappings(pre_mapping=mapping, pre_static=static_vals)
         self.status_lbl.configure(text=f"✅ 平台設定 '{name}' 已匯入修改區！", text_color="green")
-        
-    def load_sample(self):
-        filepath = filedialog.askopenfilename(filetypes=[("Excel", "*.xlsx;*.xls")])
+        self.entry_skip_rows.bind("<KeyRelease>", self._on_skip_changed)
+
+    def _on_skip_changed(self, event):
+        if not hasattr(self, 'current_sample_path') or not self.current_sample_path:
+            return
+        self.load_sample(self.current_sample_path)
+            
+    def load_sample(self, force_path=None):
+        filepath = force_path
+        if not filepath:
+            filepath = filedialog.askopenfilename(filetypes=[("Excel", "*.xlsx;*.xls")])
         if not filepath: return
+        self.current_sample_path = filepath
+        
         try:
-            df = pd.read_excel(filepath, nrows=0)
-            self.vendor_headers = list(df.columns)
+            skip_val = self.entry_skip_rows.get().strip()
+            skip_r = int(skip_val) if skip_val.isdigit() else 0
+            
+            import msoffcrypto
+            import io
+            
+            # Simple read
+            try:
+                df = pd.read_excel(filepath, nrows=0, skiprows=skip_r)
+            except Exception as e:
+                # Basic fallback
+                df = pd.read_excel(filepath, nrows=0)
+                
+            self.vendor_headers = [str(col) for col in df.columns]
             self.render_mappings()
         except Exception as e:
             messagebox.showerror("讀取失敗", f"無法讀取範本檔案:\n{str(e)}")

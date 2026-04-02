@@ -68,7 +68,7 @@ class SummaryConfigWindow(ctk.CTkToplevel):
         config_head_frame.pack(fill="x", pady=5)
         
         ctk.CTkLabel(config_head_frame, text="目前編輯:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
-        self.lbl_current_preset = ctk.CTkLabel(config_head_frame, text="預設主表單", font=ctk.CTkFont(weight="bold", text_color="#F4A460"))
+        self.lbl_current_preset = ctk.CTkLabel(config_head_frame, text="預設主表單", font=ctk.CTkFont(weight="bold"), text_color="#F4A460")
         self.lbl_current_preset.grid(row=0, column=1, padx=5, pady=5, sticky="w")
         
         ctk.CTkLabel(config_head_frame, text="觸發關鍵字 (逗號分隔):").grid(row=1, column=0, padx=5, pady=5, sticky="w")
