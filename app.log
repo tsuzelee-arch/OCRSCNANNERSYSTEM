@@ -1,0 +1,24 @@
+2026-04-02 07:21:31 | INFO     | state_manager | StateManager initialized.
+2026-04-02 07:23:59 | INFO     | main | 初始化資料庫 (Initializing Database)...
+2026-04-02 07:23:59 | INFO     | main | 啟動主應用程式介面 (Starting Main App Window)...
+2026-04-02 07:24:03 | INFO     | state_manager | StateManager initialized.
+2026-04-02 07:24:52 | ERROR    | ocr_service | GoogleAPIError: 400 API Key not found. Please pass a valid API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API Key not found. Please pass a valid API key."
+]
+2026-04-02 07:26:56 | INFO     | state_manager | 已覆寫總表紀錄，目前共 47 筆。
+2026-04-02 07:48:58 | INFO     | ocr_service | Gemini API 連線測試成功。
+2026-04-02 07:51:45 | INFO     | state_manager | 已覆寫總表紀錄，目前共 47 筆。
+2026-04-02 08:11:22 | INFO     | main | 初始化資料庫 (Initializing Database)...
+2026-04-02 08:11:22 | INFO     | main | 啟動主應用程式介面 (Starting Main App Window)...
+2026-04-02 08:11:27 | INFO     | state_manager | StateManager initialized.
+2026-04-02 08:20:26 | INFO     | main | 初始化資料庫 (Initializing Database)...
+2026-04-02 08:20:26 | INFO     | main | 啟動主應用程式介面 (Starting Main App Window)...
+2026-04-02 08:20:30 | INFO     | state_manager | StateManager initialized.
+2026-04-02 08:22:47 | INFO     | state_manager | 已覆寫總表紀錄，目前共 31 筆。
+2026-04-02 08:28:37 | INFO     | state_manager | 已覆寫總表紀錄，目前共 1 筆。

@@ -1,0 +1,26 @@
+# 排除開發中產生的暫存與環境檔案
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# 排除資料庫與設定檔 (含敏感金鑰，絕對不要上傳)
+*.db
+*.db-journal
+order_ocr_config*.json
+error_log.txt
+
+# 排除打包生成的檔案
+dist/
+build/
+*.spec
+
+# 排除 OS 與 IDE 檔案
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

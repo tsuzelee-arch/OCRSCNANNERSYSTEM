@@ -1,0 +1,14 @@
+customtkinter
+pandas
+openpyxl
+xlrd
+easyocr
+pdfplumber
+google-generativeai
+Pillow
+msoffcrypto-python
+opencv-python
+torch
+torchvision
+# 如果需要 GPU 加速，請手動參考 CUDA 部署指南
+# torch --index-url https://download.pytorch.org/whl/cu121
